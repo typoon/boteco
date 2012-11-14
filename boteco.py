@@ -46,7 +46,7 @@ class Boteco:
         self._send_command("JOIN "+ channel)
       
     def is_connected(self):
-        return self._is_connected
+        return self._sock.is_connected
 
     def parse(self):
             

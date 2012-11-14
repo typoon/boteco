@@ -3,6 +3,7 @@ import select
 
 class Connection:
     _instance = None
+    is_connected = False
     
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -15,10 +16,12 @@ class Connection:
         self._port = port
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.connect((self._host, self._port))
+        self.is_connected = True
 
     def disconnect(self):
-        self._sock.shutdown()
+        self._sock.shutdown(socket.SHUT_RDWR)
         self._sock.close()
+        self.is_connected = False
 
     def send(self, data):
         self._sock.send(bytes(data + "\r\n", "ascii"))
