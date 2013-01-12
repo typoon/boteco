@@ -24,6 +24,7 @@ class Connection:
         self.is_connected = False
 
     def send(self, data):
+        print("Sending %s\n" % data)
         self._sock.send(bytes(data + "\r\n", "ascii"))
 
     def read_line(self):

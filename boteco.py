@@ -4,6 +4,8 @@ from privatemessageparser import PrivateMessageParser
 
 class Boteco:
 
+    joined_channels = []
+
     def __init__(self, host, port, nick):
         self.host = host
         self.port = port
@@ -16,8 +18,6 @@ class Boteco:
         if self._is_connected:
             return
 
-        #self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #self._sock.connect((self.host, self.port))
         self._sock = Connection()
         self._sock.connect(self.host, self.port)
         
@@ -31,10 +31,7 @@ class Boteco:
         self._send_command("NICK " + self.nick)
         self._send_command("USER " + self.nick + " myhost myhost :" + self.nick)
 
-        self._is_connected = True
-
         # Read the whole MOTD and whatever else there is and simply ignore
-
         while 1:
             data = self._read_line()
             if data == "":
@@ -55,7 +52,7 @@ class Boteco:
         if len(data) == 0:
             return
 
-        print(data)
+        print("Parse: %s" % data)
 
         tokens = [el.strip() for el in data.split(" ")]
 
@@ -69,7 +66,6 @@ class Boteco:
 
             elif tokens[0] == "ERROR":
                 self._sock.disconnect()
-                self._is_connected = False
 
             else:
                 print(tokens)
