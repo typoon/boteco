@@ -9,11 +9,9 @@ Usage:
 '''
 
 def run(ircmsg, conn):
-    values = []
-    hex_val = 0
 
     if ircmsg.args == "":
-        return
+        return ""
 
     for i in ircmsg.args:
         line = "JOIN %s" % i

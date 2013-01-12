@@ -29,7 +29,7 @@ class IRCMessage:
         self.from_host = data[data.find("!")+1:data.find(" ")]
         self.msg_type  = "PRIVMSG"
         self.to        = tokens[2]
-        self.msg       = (" ".join(tokens[3:])).lstrip(":")
+        self.msg       = (" ".join(tokens[3:])).lstrip(":").strip()
 
         if self.msg[0] == "." or self.msg[0] == "!":
             if self.msg.find(" ") > 0:

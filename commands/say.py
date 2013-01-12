@@ -8,4 +8,15 @@ Usage:
 '''
 
 def run(ircmsg, conn):
-    return "PRIVMSG %s :%s" % (ircmsg.to, " ".join(ircmsg.args))
+
+    if ircmsg.args == "":
+        return ""
+
+    channel = ircmsg.args[0]
+    if channel[0] != "#":
+        channel = ircmsg.to
+        line = "PRIVMSG %s :%s" % (channel, " ".join(ircmsg.args))
+    else:
+        line = "PRIVMSG %s :%s" % (channel, " ".join(ircmsg.args[1:]))
+    
+    return line

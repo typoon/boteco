@@ -25,7 +25,7 @@ class Connection:
 
     def send(self, data):
         print("Sending %s\n" % data)
-        self._sock.send(bytes(data + "\r\n", "ascii"))
+        self._sock.send(bytes(data + "\r\n", "utf-8"))
 
     def read_line(self):
         
@@ -33,18 +33,20 @@ class Connection:
         if check[0] == []:
             return ""
 
-        line = str("")
+        line = b''
 
         try:
             while 1:
-                b = self._sock.recv(1).decode("ascii")
+                b = self._sock.recv(1)
                 line += b
 
                 # Next byte is the last, read it and get out!
-                if b == '\r':
-                    line += self._sock.recv(1).decode("ascii")
+                if b == b'\r':
+                    line += self._sock.recv(1)
                     break
+                    
         except:
             print("error reading byte")
 
-        return line.strip()
+        
+        return line.decode("utf-8").strip()
