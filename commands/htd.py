@@ -35,4 +35,9 @@ def run(botstate, ircmsg, conn):
     conn.send(line)
 
     return ""
-            
+
+def help():
+    help_text = ("This commands converts and hexadecimal number to decimal."
+                 "It accepts multiple parameters, in three diferent formats"
+                 "Use: .htd 0x30 30 30h")
+
