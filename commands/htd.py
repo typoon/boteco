@@ -10,7 +10,7 @@ Usage:
     .htd 0x10 20 30
 '''
 
-def run(ircmsg, conn):
+def run(botstate, ircmsg, conn):
     values = []
     hex_val = 0
 
@@ -29,7 +29,7 @@ def run(ircmsg, conn):
             invalid = "invalid-%s" % i
             values.append(invalid)
 
-    line = "PRIVMSG %s :%s %s" % (ircmsg.to, ircmsg.from_nick, " ".join(values))
+    line = "PRIVMSG %s :%s: %s" % (ircmsg.to, ircmsg.from_nick, " ".join(values))
     print("Module htd: %s\n" % line)
 
     conn.send(line)

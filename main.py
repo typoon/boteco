@@ -26,16 +26,16 @@ def parse_conf(file_name):
 
             elif conf == "channel":
                 global channel
-                channel = value
+                channel = value.split(" ")
         
 
 if __name__ == "__main__":
     # Default values
     server = "irc.freenode.net"
     port = 6667
-    nick = "Boteco"
-    name = "Boteco"
-    channel = "#boteco"
+    nick = "XBoteco"
+    name = "XBoteco"
+    channel = ["#boteco"]
 
     file_name = "boteco.cfg"
     parse_conf(file_name)
@@ -51,5 +51,9 @@ if __name__ == "__main__":
     bot.connect()
     bot.join_channel(channel)
 
+    sock = bot.get_socket()
+
     while bot.is_connected():
-        bot.parse()
+        data = sock.read_line()
+        print(data)
+        bot.parse(data)

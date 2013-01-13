@@ -7,7 +7,7 @@ Usage:
     .say Hello World
 '''
 
-def run(ircmsg, conn):
+def run(botstate, ircmsg, conn):
 
     if ircmsg.args == "":
         return ""
