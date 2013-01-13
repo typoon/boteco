@@ -14,6 +14,9 @@ def run(botstate, ircmsg, conn):
     values = []
     hex_val = 0
 
+    if not ircmsg.args:
+        return ""
+
     for i in ircmsg.args:
         try:
             if i[0:2] != "0x":
@@ -29,15 +32,16 @@ def run(botstate, ircmsg, conn):
             invalid = "invalid-%s" % i
             values.append(invalid)
 
-    line = "PRIVMSG %s :%s: %s" % (ircmsg.to, ircmsg.from_nick, " ".join(values))
-    print("Module htd: %s\n" % line)
+    line = "PRIVMSG %s :%s: %s" % (ircmsg.reply_to, ircmsg.from_nick, " ".join(values))
 
     conn.send(line)
 
     return ""
 
 def help():
-    help_text = ("This commands converts and hexadecimal number to decimal."
-                 "It accepts multiple parameters, in three diferent formats"
-                 "Use: .htd 0x30 30 30h")
+    help_text = ("HTD: Hexadecimal to Decimal\n"
+                 "This command converts an hexadecimal number to decimal.\n"
+                 "It accepts multiple parameters, in three diferent formats\n"
+                 "Use: .htd 0x30 30 30h\n")
 
+    return help_text

@@ -79,8 +79,8 @@ class Boteco:
     def _send_command(self, command):
         self._command.send_command(command)
 
-    def _send_message(self, ircmsg, msg):
-        self._command.send_message(ircmsg, msg)
+    def _send_message(self, to, msg):
+        self._command.send_message(to, msg)
 
     def _handle_privmsg(self, ircmsg):
         if ircmsg.cmd == "":

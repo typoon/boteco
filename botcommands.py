@@ -45,12 +45,16 @@ class BotCommands:
             self._reload_modules(ircmsg)
             return
 
-        elif ircmsg.cmd == "join":
+        elif ircmsg.cmd == "join" or ircmsg.cmd == "j":
             self._join(ircmsg)
             return
 
         elif ircmsg.cmd == "channels":
             self._list_channels(ircmsg)
+            return
+
+        elif ircmsg.cmd == "help" or ircmsg.cmd == "h":
+            self._help(ircmsg)
             return
 
         # Commands created by external modules
@@ -77,7 +81,7 @@ class BotCommands:
                     
             except:
                 msg = "Module %s does not exist or has errors (%s)" % (ircmsg.cmd, sys.exc_info())
-                self.send_message(ircmsg, msg)
+                self.send_message(ircmsg.reply_to, msg)
                 
         else:
             line = getattr(sys.modules[mod_name], "run")(self.botstate, ircmsg, self._conn)
@@ -90,8 +94,8 @@ class BotCommands:
     def send_command(self, line):
         self._conn.send(line)
 
-    def send_message(self, ircmsg, msg):
-        line = "PRIVMSG %s :%s" % (ircmsg.to, msg)
+    def send_message(self, to, msg):
+        line = "PRIVMSG %s :%s" % (to, msg)
         self.send_command(line)
 
     def join(self, channel):
@@ -115,11 +119,11 @@ class BotCommands:
         else:
             line  = "No modules have been loaded yet"
 
-        self.send_message(ircmsg, line)
+        self.send_message(ircmsg.reply_to, line)
 
     def _quit(self, ircmsg):
 
-        if ircmsg.args != "":
+        if not ircmsg.args:
             line = "QUIT :%s" % " ".join(ircmsg.args)
         else:
             line = "QUIT :Don't kill meeeeeeeeeeeeeeeeee"
@@ -154,7 +158,7 @@ class BotCommands:
                         
                 except:
                     msg = "Module %s cannot be reloaded (%s)" % (i, sys.exc_info())
-                    self.send_message(ircmsg, msg)
+                    self.send_message(ircmsg.reply_to, msg)
         else:
             self.load_modules()  # Loads any new modules that have been created
             
@@ -165,19 +169,19 @@ class BotCommands:
                     reloaded_modules.append(name[name.find(".")+1:]) # Remove commands. from the module name
                 except:
                     msg = "Module %s cannot be reloaded (%s)" % (i.__name__, sys.exc_info())
-                    self.send_message(ircmsg, msg)
+                    self.send_message(ircmsg.reply_to, msg)
 
         if len(reloaded_modules) > 0:
             msg = "The following modules were reloaded: %s" % " ".join(reloaded_modules)
         else:
             msg = "No modules have been reloaded"
             
-        self.send_message(ircmsg, msg)
+        self.send_message(ircmsg.reply_to, msg)
 
     def _join(self, ircmsg):
         
-        if ircmsg.args == "":
-            return ""
+        if not ircmsg.args:
+            return
 
         for i in ircmsg.args:
             line = "JOIN %s" % i
@@ -191,5 +195,17 @@ class BotCommands:
             channels.append(i.channel)
 
         msg = "In channels: %s" % " ".join(channels)
-        self.send_message(ircmsg, msg)
-            
+        self.send_message(ircmsg.reply_to, msg)
+
+    def _help(self, ircmsg):
+        if not ircmsg.args:
+            return
+
+        cmd = ircmsg.args[0]
+
+        if cmd in [m.__name__[m.__name__.find(".")+1:] for m in self._modules]:
+            mod_name = "commands.%s" % cmd
+            help_text = getattr(sys.modules[mod_name], "help")()
+
+            for l in help_text.split("\n"):
+                self.send_message(ircmsg.from_nick, l)

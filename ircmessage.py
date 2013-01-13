@@ -2,12 +2,15 @@ class IRCMessage:
     from_host = ""
     from_nick = ""
     msg_type  = ""  # PRIVMSG, NOTICE, etc..
-    to = ""
+    to = ""        # To where was this PRIVMSG sent?
     msg = ""       # The whole message, including the !cmd in case it is present
     cmd = ""       # The !cmd or .cmd without the leading char "." or "!"
-    args = ""      # The whole message without the !cmd and represented as list
+    args = []      # The whole message without the !cmd and represented as list
                    # created by spliting the message on spaces
                    # msg.split(" ")
+
+    reply_to = ""  # To whom/where should the bot reply?
+
 
     def __init__(self, data):
         self.populate(data)
@@ -54,6 +57,11 @@ class IRCMessage:
         self.msg_type  = "PRIVMSG"
         self.to        = tokens[2]
         self.msg       = (" ".join(tokens[3:])).lstrip(":").strip()
+
+        if self.to[0] == "#":
+            self.reply_to = self.to
+        else:
+            self.reply_to = self.from_nick
 
         if self.msg[0] == "." or self.msg[0] == "!":
             if self.msg.find(" ") > 0:
